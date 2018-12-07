@@ -17,10 +17,18 @@ makeField x = makeField' (maximum x) (minimum x)
 -- brute force variant: loop through points in field
 -- if point not in points, find closest in points, increase accumulator
 accum :: [Point] -> [Point] -> Map.Map Point Integer
-accum field points = Map.fromListWith (+) [((Point 1 2),1)] -- TODO
+-- accum field points = Map.fromListWith (+) [((Point 1 2),1)]
+accum field points = Map.fromListWith (+) (zip (map (closestGuard points) field) (repeat 1))
 
-closest :: Point -> [Point] -> Point
-closest p points = closest' (elemIndices (minimum dst) dst) points
+closestGuard :: [Point] -> Point -> Point
+closestGuard points p
+    | p == c = Point (-1) (-1)
+    | otherwise = c
+        where
+            c = closest points p
+
+closest :: [Point] -> Point -> Point
+closest points p = closest' (elemIndices (minimum dst) dst) points
     where
         dst = map(mhDist p) points
         closest' [] x = Point (-2) (-1)
@@ -48,6 +56,8 @@ main = do
     putStrLn "---"
     let mapped = accum field points
     print mapped
-    print $ closest (Point 1 4) points
+    print $ closestGuard points (Point 1 1)
+    print $ zip (map (closestGuard points) field) field
+    print $ accum field points
     print 42
 
