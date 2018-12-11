@@ -8,3 +8,7 @@ spin n (x:xs)
         let l = (length (x:xs))
             nn = (n `mod` l) + l
         in spin (nn-1) (xs ++ [x])
+
+insert :: a -> Int -> [a] -> [a]
+insert a n [] = [a]
+insert a n lst = a:(spin n lst)
